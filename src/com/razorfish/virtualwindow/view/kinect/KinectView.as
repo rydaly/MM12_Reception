@@ -15,21 +15,26 @@ package com.razorfish.virtualwindow.view.kinect
 	import com.razorfish.virtualwindow.view.scenes.MidgroundScene;
 	
 	import flash.display.BitmapData;
+	import flash.geom.Point;
 	import flash.utils.describeType;
 	
 	import starling.display.Image;
+	import starling.display.Quad;
 	import starling.display.Sprite;
 	import starling.events.Event;
+	import starling.events.Touch;
+	import starling.events.TouchEvent;
+	import starling.events.TouchPhase;
 	import starling.textures.Texture;
 	
 	public class KinectView extends MainView
 	{
 		public static const KinectMaxDepthInFlash:uint = 200;
 		
-		private var isDev:Boolean = true;
-		
 		private var device:Kinect;
 		private var sceneContainer:Sprite;
+		
+		private var debugShape:Quad;
 		
 		private var explicitWidth:int = Constants.EXPLICIT_WIDTH;
 		private var explicitHeight:int = Constants.EXPLICIT_HEIGHT;
@@ -37,8 +42,8 @@ package com.razorfish.virtualwindow.view.kinect
 		public var testTexture:Texture;
 		public var testBitmap:BitmapData;
 		public var testImage:Image;
+		
 		public var cameraElevationStepper:NumericStepper;
-		public var skeletonSmoothingStepper:NumericStepper;
 		
 		private var bgScene:BackgroundScene;
 		private var mgScene:MidgroundScene;
@@ -48,14 +53,6 @@ package com.razorfish.virtualwindow.view.kinect
 		
 		override protected function startDemoImplementation():void 
 		{
-			trace("[KinectView] startImplementation");
-			
-			testBitmap = new BitmapData(25, 25, false, 0xFF0000);
-			testTexture = Texture.fromBitmapData(testBitmap);
-			testImage = new Image(testTexture);
-			testImage.x = Constants.SCENE_CENTER_X - (testImage.width * 0.5);
-			testImage.y = Constants.SCENE_CENTER_Y - (testImage.height * 0.5);
-			
 			bgScene = new BackgroundScene();
 			mgScene = new MidgroundScene();
 			fgScene = new ForegroundScene();
@@ -70,11 +67,18 @@ package com.razorfish.virtualwindow.view.kinect
 			sceneContainer.addChild(bgScene);
 			sceneContainer.addChild(mgScene);
 			sceneContainer.addChild(fgScene);
-			sceneContainer.addChild(testImage);
 			
-			trace("test X :: " + testImage.x + " test Y :: " + testImage.y);
+			//trace("test X :: " + testImage.x + " test Y :: " + testImage.y);
 			
 			if (Kinect.isSupported()) {
+				
+				testBitmap = new BitmapData(25, 25, false, 0xFF0000);
+				testTexture = Texture.fromBitmapData(testBitmap);
+				testImage = new Image(testTexture);
+				testImage.x = Constants.SCENE_CENTER_X - (testImage.width * 0.5);
+				testImage.y = Constants.SCENE_CENTER_Y - (testImage.height * 0.5);
+				sceneContainer.addChild(testImage);
+				
 				device = Kinect.getDevice();
 				
 				device.addEventListener(DeviceEvent.STARTED, kinectStartedHandler, false, 0, true);
@@ -95,10 +99,38 @@ package com.razorfish.virtualwindow.view.kinect
 				device.start(settings);
 				
 				addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+				
 			} else {
 				
+				debugShape = new Quad(35, 35, 0x0000ff);
+				debugShape.x = Constants.SCENE_CENTER_X - (debugShape.width * 0.5);
+				debugShape.y = Constants.SCENE_CENTER_Y - (debugShape.height * 0.5);
+				debugShape.addEventListener(TouchEvent.TOUCH, onDebugTouch);
+				sceneContainer.addChild(debugShape);
 			}
 			
+		}
+		
+		private function onDebugTouch(e:TouchEvent):void
+		{
+			// TODO Auto Generated method stub
+			trace(" :: TOUCH :: ");
+			
+			var touch:Touch = e.getTouch(stage);
+			var position:Point = touch.getLocation(stage);
+			
+			if(touch.phase == TouchPhase.MOVED ){
+				trace("position point x :: " + position.x);
+				trace("position point y :: " + position.y);
+				
+				var trackLocX:Number = (position.x / Constants.EXPLICIT_WIDTH) + 1;
+				var trackLocY:Number = (position.y / Constants.EXPLICIT_HEIGHT) - 1;
+				
+				debugShape.x = (position.x + Constants.SCENE_OFFSET_X) - (debugShape.width / 2);
+				debugShape.y = (position.y + Constants.SCENE_OFFSET_Y) - (debugShape.height / 2);
+				
+				handleSceneMotion(trackLocX, trackLocY);
+			}
 		}
 		
 		private function onDeviceInfo(event:DeviceInfoEvent):void 
@@ -141,14 +173,7 @@ package com.razorfish.virtualwindow.view.kinect
 				
 				//testImage.z = positionRelative.z * KinectMaxDepthInFlash;
 				
-				bgScene.x = ((headLocationX * 0.5) * explicitWidth) - Constants.CENTER_X;
-				bgScene.y = ((headLocationY * -0.5) * explicitHeight) - Constants.CENTER_Y;
-				
-				mgScene.x = ((headLocationX * 0.4) * explicitWidth) - Constants.CENTER_X;
-				mgScene.y = ((headLocationY * -0.4) * explicitHeight) - Constants.CENTER_Y;
-				
-				fgScene.x = ((headLocationX * 0.05) * explicitWidth) - Constants.CENTER_X;
-				fgScene.y = ((headLocationY * -0.05) * explicitHeight) - Constants.CENTER_Y;
+				handleSceneMotion(headLocationX, headLocationY);
 			}
 			
 			if (closestUser) {
@@ -158,6 +183,18 @@ package com.razorfish.virtualwindow.view.kinect
 			if (closestUserSkeletonId != chosenSkeletonId) {
 				updateChosenSkeletonId(closestUserSkeletonId);
 			}
+		}
+		
+		private function handleSceneMotion(trackX:Number, trackY:Number):void
+		{
+			bgScene.x = ((trackX * 0.5) * explicitWidth) - Constants.CENTER_X;
+			bgScene.y = ((trackY * -0.5) * explicitHeight) - Constants.CENTER_Y;
+			
+			mgScene.x = ((trackX * 0.4) * explicitWidth) - Constants.CENTER_X;
+			mgScene.y = ((trackY * -0.4) * explicitHeight) - Constants.CENTER_Y;
+			
+			fgScene.x = ((trackX * 0.05) * explicitWidth) - Constants.CENTER_X;
+			fgScene.y = ((trackY * -0.05) * explicitHeight) - Constants.CENTER_Y;
 		}
 		
 		private function updateChosenSkeletonId(chosenSkeletonId:int):void 
