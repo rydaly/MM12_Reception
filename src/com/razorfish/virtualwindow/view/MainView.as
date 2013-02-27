@@ -5,40 +5,40 @@ package com.razorfish.virtualwindow.view
 	
 	public class MainView extends starling.display.Sprite
 	{
-		protected var demoStarted:Boolean;
+		protected var running:Boolean;
 		
 		public function MainView()
 		{
-			demoStarted = false;
+			running = false;
 			addEventListener(Event.ADDED_TO_STAGE, addedToStageHandler);
 			addEventListener(Event.REMOVED_FROM_STAGE, removedFromStageHandler);
 		}
 		protected function addedToStageHandler(event:Event):void {
-			startDemo();
+			start();
 		}
 		
 		private function removedFromStageHandler(event:Event):void {
-			stopDemo();
+			stop();
 		}
 		
-		public function startDemo():void {
-			if (!demoStarted) {
-				demoStarted = true;
-				startDemoImplementation();
+		public function start():void {
+			if (!running) {
+				running = true;
+				startImplementation();
 			}
 		}
 		
-		public function stopDemo():void {
-			if (demoStarted) {
-				demoStarted = false;
-				stopDemoImplementation();
+		public function stop():void {
+			if (running) {
+				running = false;
+				stopImplementation();
 			}
 		}
 		
-		protected function startDemoImplementation():void {
+		protected function startImplementation():void {
 		}
 		
-		protected function stopDemoImplementation():void {
+		protected function stopImplementation():void {
 		}
 	}
 }

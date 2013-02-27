@@ -22,15 +22,15 @@ package com.razorfish.virtualwindow.view.scenes
 			treeImageLeft = new Image(treeLeft);
 			
 			addChild(treeImageLeft);
-			treeImageLeft.x = 1600;
-			treeImageLeft.y = 1200;
+			treeImageLeft.x = 1550;
+			treeImageLeft.y = 100;
 			
 			treeRight = Texture.fromBitmap(new TreeTexture());
 			treeImageRight = new Image(treeRight);
 			
 			addChild(treeImageRight);
-			treeImageRight.x = 3100;
-			treeImageRight.y = 1200;
+			treeImageRight.x = 3000;
+			treeImageRight.y = 100;
 		}
 	}
 }

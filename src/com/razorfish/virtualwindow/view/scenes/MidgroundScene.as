@@ -8,7 +8,7 @@ package com.razorfish.virtualwindow.view.scenes
 	public class MidgroundScene extends Scene
 	{
 		[Embed(source="assets/textures/chicago.png")]
-		public static const TreeTexture:Class;
+		public static const ChicagoTexture:Class;
 		
 		private var chicago:Texture;
 		private var chicagoImage:Image;
@@ -17,12 +17,12 @@ package com.razorfish.virtualwindow.view.scenes
 		{
 			super();
 			
-			chicago = Texture.fromBitmap(new TreeTexture());
+			chicago = Texture.fromBitmap(new ChicagoTexture());
 			chicagoImage = new Image(chicago);
 			
 			addChild(chicagoImage);
-			chicagoImage.x = Constants.SCENE_CENTER_X - (0.5 * chicagoImage.width);
-			chicagoImage.y = 1400;
+			chicagoImage.x = Constants.SCENE_CENTER_X - (0.5 * chicagoImage.width) + 65;
+			chicagoImage.y = 850;
 		}
 	}
 }
