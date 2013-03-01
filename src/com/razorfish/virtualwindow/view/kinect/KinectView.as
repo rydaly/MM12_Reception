@@ -129,7 +129,7 @@ package com.razorfish.virtualwindow.view.kinect
 				var trackLocX:Number = position.x / Constants.EXPLICIT_WIDTH;
 				var trackLocY:Number = position.y / Constants.EXPLICIT_HEIGHT;
 				
-				// map stage coords (0 - EXPLICIT) to user head location (-1 - 1)
+				// map stage coords (0 - EXPLICIT) to faux user head location (0 - 1) - for debug shape
 				var inMin:int = 0;
 				var inMax:int = 1;
 				var outMin:int = 0;
@@ -138,10 +138,15 @@ package com.razorfish.virtualwindow.view.kinect
 				var outNumX:Number = outMin + (outMaxX - outMin) * (trackLocX - inMin) / (inMax - inMin); 
 				var outNumY:Number = outMin + (outMaxY - outMin) * (trackLocY - inMin) / (inMax - inMin);
 				
-				trace("head X :: " + trackLocX + " head Y :: " + trackLocY);
+				// map :: for scene motion 
+				/*var _inMin:int = 0;
+				var _inMax:int = 1;
+				var _outMin:int = -1;
+				var _outMax:int = 1;
+				var _outNumX:Number = _outMin + (_outMax - _outMin) * (outNumX - inMin) / (inMax - inMin);
+				var _outNumY:Number = _outMin + (_outMax - _outMin) * (outNumY - inMin) / (inMax - inMin);*/
 				
-				/*debugShape.x = (position.x + Constants.SCENE_OFFSET_X) - (debugShape.width / 2);
-				debugShape.y = (position.y + Constants.SCENE_OFFSET_Y) - (debugShape.height / 2);*/
+				trace("head X :: " + trackLocX + " head Y :: " + trackLocY);
 				
 				debugShape.x = outNumX - 15;
 				debugShape.y = outNumY - 15;
