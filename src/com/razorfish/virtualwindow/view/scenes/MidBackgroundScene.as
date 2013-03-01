@@ -8,7 +8,7 @@ package com.razorfish.virtualwindow.view.scenes
 
 	public class MidBackgroundScene extends Scene
 	{
-		[Embed(source="assets/textures/atlanta.png")]
+		[Embed(source="/assets/textures/atlanta.png")]
 		public static const AtlantaTexture:Class;
 		
 		private var atlanta:Texture;
@@ -24,9 +24,10 @@ package com.razorfish.virtualwindow.view.scenes
 			blur.blurX = blur.blurY = 5;
 			
 			addChild(atlantaImage);
-			atlantaImage.x = Constants.SCENE_CENTER_X - (0.5 * atlantaImage.width) - 145;
-			atlantaImage.y = 800;
+			atlantaImage.x = Constants.SCENE_CENTER_X - (0.5 * atlantaImage.width);
+			atlantaImage.y = 1000;
 			atlantaImage.filter = blur;
+			atlantaImage.alpha = 0.5;
 		}
 	}
 }

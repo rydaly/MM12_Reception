@@ -21,8 +21,8 @@ package com.razorfish.virtualwindow.view.scenes
 			chicagoImage = new Image(chicago);
 			
 			addChild(chicagoImage);
-			chicagoImage.x = Constants.SCENE_CENTER_X - (0.5 * chicagoImage.width) + 65;
-			chicagoImage.y = 850;
+			chicagoImage.x = Constants.SCENE_CENTER_X - (0.5 * chicagoImage.width);
+			chicagoImage.y = 1200;
 		}
 	}
 }

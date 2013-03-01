@@ -72,16 +72,19 @@ package com.razorfish.virtualwindow.view.kinect
 			sceneContainer.addChild(mgScene);
 			sceneContainer.addChild(fgScene);
 			
+			trace("Container X :: " + sceneContainer.x + " Container Y :: " + sceneContainer.y);
+			trace("MG X :: " + mgScene.x + " MG Y :: " + mgScene.y);
+			
 			//trace("test X :: " + testImage.x + " test Y :: " + testImage.y);
 			
 			if (Kinect.isSupported()) {
 				
-				testBitmap = new BitmapData(25, 25, false, 0xFF0000);
+				testBitmap = new BitmapData(30, 30, false, 0xFF0000);
 				testTexture = Texture.fromBitmapData(testBitmap);
 				testImage = new Image(testTexture);
-				testImage.x = Constants.SCENE_CENTER_X - (testImage.width * 0.5);
-				testImage.y = Constants.SCENE_CENTER_Y - (testImage.height * 0.5);
-				sceneContainer.addChild(testImage);
+				testImage.x = Constants.CENTER_X - (testImage.width * 0.5);
+				testImage.y = Constants.CENTER_Y - (testImage.height * 0.5);
+				addChild(testImage);
 				
 				device = Kinect.getDevice();
 				
@@ -98,6 +101,7 @@ package com.razorfish.virtualwindow.view.kinect
 				settings.depthShowUserColors = true;
 				settings.skeletonEnabled = true;
 				settings.handTrackingEnabled = true;
+				settings.seatedSkeletonEnabled = true;
 				//settings.userEnabled = true;
 				
 				device.start(settings);
@@ -106,30 +110,41 @@ package com.razorfish.virtualwindow.view.kinect
 				
 			} else {
 				
-				debugShape = new Quad(35, 35, 0x0000ff);
-				debugShape.x = Constants.SCENE_CENTER_X - (debugShape.width * 0.5);
-				debugShape.y = Constants.SCENE_CENTER_Y - (debugShape.height * 0.5);
+				debugShape = new Quad(30, 30, 0x0000ff);
+				debugShape.x = Constants.CENTER_X - (debugShape.width * 0.5);
+				debugShape.y = Constants.CENTER_Y - (debugShape.height * 0.5);
 				debugShape.addEventListener(TouchEvent.TOUCH, onDebugTouch);
-				sceneContainer.addChild(debugShape);
+				addChild(debugShape);
 			}
 			
 		}
 		
 		private function onDebugTouch(e:TouchEvent):void
 		{
-			// TODO Auto Generated method stub
-			trace(" :: TOUCH :: ");
-			
 			var touch:Touch = e.getTouch(stage);
 			var position:Point = touch.getLocation(stage);
 			
 			if(touch.phase == TouchPhase.MOVED ){
 				
-				var trackLocX:Number = (position.x / Constants.EXPLICIT_WIDTH) + 1;
-				var trackLocY:Number = (position.y / Constants.EXPLICIT_HEIGHT) - 1;
+				var trackLocX:Number = position.x / Constants.EXPLICIT_WIDTH;
+				var trackLocY:Number = position.y / Constants.EXPLICIT_HEIGHT;
 				
-				debugShape.x = (position.x + Constants.SCENE_OFFSET_X) - (debugShape.width / 2);
-				debugShape.y = (position.y + Constants.SCENE_OFFSET_Y) - (debugShape.height / 2);
+				// map stage coords (0 - EXPLICIT) to user head location (-1 - 1)
+				var inMin:int = 0;
+				var inMax:int = 1;
+				var outMin:int = 0;
+				var outMaxX:int = Constants.EXPLICIT_WIDTH;
+				var outMaxY:int = Constants.EXPLICIT_HEIGHT;
+				var outNumX:Number = outMin + (outMaxX - outMin) * (trackLocX - inMin) / (inMax - inMin); 
+				var outNumY:Number = outMin + (outMaxY - outMin) * (trackLocY - inMin) / (inMax - inMin);
+				
+				trace("head X :: " + trackLocX + " head Y :: " + trackLocY);
+				
+				/*debugShape.x = (position.x + Constants.SCENE_OFFSET_X) - (debugShape.width / 2);
+				debugShape.y = (position.y + Constants.SCENE_OFFSET_Y) - (debugShape.height / 2);*/
+				
+				debugShape.x = outNumX - 15;
+				debugShape.y = outNumY - 15;
 				
 				handleSceneMotion(trackLocX, trackLocY);
 			}
@@ -162,19 +177,32 @@ package com.razorfish.virtualwindow.view.kinect
 			var closestUser:User;
 			var closestUserSkeletonId:int = -1;
 			
-			for each(var user:User in device.users) {
+			var users:int = device.users.length;
+			var userInc:int = 0;
+			
+			for (userInc; userInc < users; userInc++) {
+				var user:User = device.users[userInc];
 				
-				//closestUser ||= user;
+				closestUser ||= user;
 				if (user.position.world.z < closestUser.position.world.z) closestUser = user;
 				
-				var headLocationX:Number = (user.head.position.worldRelative.x + 1);
-				var headLocationY:Number = (user.head.position.worldRelative.y - 1);
+				var headLocationX:Number = user.head.position.worldRelative.x;
+				var headLocationY:Number = -user.head.position.worldRelative.y;
 				
-				testImage.x = (((headLocationX * 0.5) * explicitWidth) + Constants.SCENE_OFFSET_X) - (testImage.width * 0.5);
-				testImage.y = (((headLocationY * -0.5) * explicitHeight) + Constants.SCENE_OFFSET_Y) - (testImage.height * 0.5);
+				// map stage coords (0 - EXPLICIT) to user head location (-1 - 1)
+				var inMin:int = -1;
+				var inMax:int = 1;
+				var outMin:int = 0;
+				var outMaxX:int = Constants.EXPLICIT_WIDTH;
+				var outMaxY:int = Constants.EXPLICIT_HEIGHT;
+				var outNumX:Number = outMin + (outMaxX - outMin) * (headLocationX - inMin) / (inMax - inMin); 
+				var outNumY:Number = outMin + (outMaxY - outMin) * (headLocationY - inMin) / (inMax - inMin);
 				
-				/*testImage.x = ((Constants.SCENE_CENTER_X - (testImage.width * 0.5)) + ((headLocationX * 0.5) * explicitWidth)) - Constants.CENTER_X;
-				testImage.y = ((Constants.SCENE_CENTER_Y - (testImage.height * 0.5)) + ((headLocationY * -0.5) * explicitHeight)) - Constants.CENTER_Y;*/
+				testImage.x = outNumX - 15;
+				testImage.y = outNumY - 15;
+				
+				trace(" :: SPACERZ :: ");
+				trace("test X :: " + testImage.x + " test Y :: " + testImage.y);
 				
 				//testImage.z = positionRelative.z * KinectMaxDepthInFlash;
 				
@@ -192,17 +220,19 @@ package com.razorfish.virtualwindow.view.kinect
 		
 		private function handleSceneMotion(trackX:Number, trackY:Number):void
 		{	
-			bgScene.x = ((trackX * 0.5) * explicitWidth) - Constants.CENTER_X;
-			bgScene.y = ((trackY * 0.5) * explicitHeight) + Constants.CENTER_Y;
+			// multiply scene offset by 0 - 1 for movement amount
 			
-			mbgScene.x = ((trackX * 0.4) * explicitWidth) - Constants.CENTER_X;
-			mbgScene.y = ((trackY * 0.4) * explicitHeight) + Constants.CENTER_Y;
+			bgScene.x = trackX * (Constants.SCENE_OFFSET_X * 1);
+			bgScene.y = -trackY * (Constants.SCENE_OFFSET_Y * 1);
 			
-			mgScene.x = ((trackX * 0.3) * explicitWidth) - Constants.CENTER_X;
-			mgScene.y = ((trackY * 0.3) * explicitHeight) + Constants.CENTER_Y;
+			mbgScene.x = trackX * (Constants.SCENE_OFFSET_X * 0.5);
+			mbgScene.y = -trackY * (Constants.SCENE_OFFSET_Y * 0.5);
 			
-			fgScene.x = ((trackX * 0.05) * explicitWidth) - Constants.CENTER_X;
-			fgScene.y = ((trackY * 0.05) * explicitHeight) + Constants.CENTER_Y;
+			mgScene.x = trackX * (Constants.SCENE_OFFSET_X * 0.3);
+			mgScene.y = -trackY * (Constants.SCENE_OFFSET_Y * 0.3);
+			
+			fgScene.x = trackX * (Constants.SCENE_OFFSET_X * 0.05);
+			fgScene.y = -trackY * (Constants.SCENE_OFFSET_Y * 0.05);
 		}
 		
 		private function updateChosenSkeletonId(chosenSkeletonId:int):void 
