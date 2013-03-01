@@ -129,24 +129,11 @@ package com.razorfish.virtualwindow.view.kinect
 				var trackLocX:Number = position.x / Constants.EXPLICIT_WIDTH;
 				var trackLocY:Number = position.y / Constants.EXPLICIT_HEIGHT;
 				
-				// map stage coords (0 - EXPLICIT) to faux user head location (0 - 1) - for debug shape
-				var inMin:int = 0;
-				var inMax:int = 1;
-				var outMin:int = 0;
-				var outMaxX:int = Constants.EXPLICIT_WIDTH;
-				var outMaxY:int = Constants.EXPLICIT_HEIGHT;
-				var outNumX:Number = outMin + (outMaxX - outMin) * (trackLocX - inMin) / (inMax - inMin); 
-				var outNumY:Number = outMin + (outMaxY - outMin) * (trackLocY - inMin) / (inMax - inMin);
+				var outNumX:Number = mapRange(0, 1, 0, Constants.EXPLICIT_WIDTH, trackLocX);
+				var outNumY:Number = mapRange(0, 1, 0, Constants.EXPLICIT_HEIGHT, trackLocY);
 				
-				// map :: for scene motion 
-				var _inMin:int = 0;
-				var _inMax:int = 1;
-				var _outMin:int = -1;
-				var _outMax:int = 1;
-				var _outNumX:Number = _outMin + (_outMax - _outMin) * (trackLocX - _inMin) / (_inMax - _inMin);
-				var _outNumY:Number = _outMin + (_outMax - _outMin) * (trackLocY - _inMin) / (_inMax - _inMin);
-				
-				trace("head X :: " + trackLocX + " head Y :: " + trackLocY);
+				var _outNumX:Number = mapRange(0, 1, -1, 1, trackLocX);
+				var _outNumY:Number = mapRange(0, 1, -1, 1, trackLocY);
 				
 				debugShape.x = outNumX - 15;
 				debugShape.y = outNumY - 15;
@@ -194,20 +181,11 @@ package com.razorfish.virtualwindow.view.kinect
 				var headLocationX:Number = user.head.position.worldRelative.x;
 				var headLocationY:Number = -user.head.position.worldRelative.y;
 				
-				// map stage coords (0 - EXPLICIT) to user head location (-1 - 1)
-				var inMin:int = -1;
-				var inMax:int = 1;
-				var outMin:int = 0;
-				var outMaxX:int = Constants.EXPLICIT_WIDTH;
-				var outMaxY:int = Constants.EXPLICIT_HEIGHT;
-				var outNumX:Number = outMin + (outMaxX - outMin) * (headLocationX - inMin) / (inMax - inMin); 
-				var outNumY:Number = outMin + (outMaxY - outMin) * (headLocationY - inMin) / (inMax - inMin);
+				var outNumX:Number = mapRange(-1, 1, 0, Constants.EXPLICIT_WIDTH, headLocationX);
+				var outNumY:Number = mapRange(-1, 1, 0, Constants.EXPLICIT_HEIGHT, headLocationY);
 				
 				testImage.x = outNumX - 15;
 				testImage.y = outNumY - 15;
-				
-				trace(" :: SPACERZ :: ");
-				trace("test X :: " + testImage.x + " test Y :: " + testImage.y);
 				
 				//testImage.z = positionRelative.z * KinectMaxDepthInFlash;
 				
@@ -251,6 +229,12 @@ package com.razorfish.virtualwindow.view.kinect
 					device.chooseSkeletons(Vector.<uint>([chosenSkeletonId]));
 				}
 			}
+		}
+		
+		private function mapRange(inMin:int, inMax:int, outMin:int, outMax:int, inNum:Number):Number
+		{
+			var outNum:Number = outMin + (outMax - outMin) * (inNum - inMin) / (inMax - inMin);
+			return outNum;
 		}
 	}
 }
