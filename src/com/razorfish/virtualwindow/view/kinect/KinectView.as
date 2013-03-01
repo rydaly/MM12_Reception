@@ -59,7 +59,7 @@ package com.razorfish.virtualwindow.view.kinect
 			mbgScene = new MidBackgroundScene();
 			mgScene = new MidgroundScene();
 			fgScene = new ForegroundScene();
-				
+			
 			sceneContainer = new Sprite();
 			sceneContainer.width = Constants.EXPLICIT_WIDTH;
 			sceneContainer.height = Constants.EXPLICIT_HEIGHT;
