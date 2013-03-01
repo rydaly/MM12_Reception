@@ -139,19 +139,19 @@ package com.razorfish.virtualwindow.view.kinect
 				var outNumY:Number = outMin + (outMaxY - outMin) * (trackLocY - inMin) / (inMax - inMin);
 				
 				// map :: for scene motion 
-				/*var _inMin:int = 0;
+				var _inMin:int = 0;
 				var _inMax:int = 1;
 				var _outMin:int = -1;
 				var _outMax:int = 1;
-				var _outNumX:Number = _outMin + (_outMax - _outMin) * (outNumX - inMin) / (inMax - inMin);
-				var _outNumY:Number = _outMin + (_outMax - _outMin) * (outNumY - inMin) / (inMax - inMin);*/
+				var _outNumX:Number = _outMin + (_outMax - _outMin) * (trackLocX - _inMin) / (_inMax - _inMin);
+				var _outNumY:Number = _outMin + (_outMax - _outMin) * (trackLocY - _inMin) / (_inMax - _inMin);
 				
 				trace("head X :: " + trackLocX + " head Y :: " + trackLocY);
 				
 				debugShape.x = outNumX - 15;
 				debugShape.y = outNumY - 15;
 				
-				handleSceneMotion(trackLocX, trackLocY);
+				handleSceneMotion(_outNumX, _outNumY);
 			}
 		}
 		
