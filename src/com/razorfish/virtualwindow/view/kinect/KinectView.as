@@ -119,6 +119,28 @@ package com.razorfish.virtualwindow.view.kinect
 			
 		}
 		
+		private function onDeviceInfo(event:DeviceInfoEvent):void 
+		{
+			trace("INFO: " + event.message + "\n");
+		}
+		
+		private function onDeviceError(event:DeviceErrorEvent):void 
+		{
+			trace("ERROR: " + event.message + "\n");
+		}
+		
+		protected function kinectStartedHandler(event:DeviceEvent):void 
+		{
+			trace("[KinectView] device started");
+			if (cameraElevationStepper != null)
+				cameraElevationStepper.value = device.cameraElevationAngle;
+		}
+		
+		protected function kinectStoppedHandler(event:DeviceEvent):void 
+		{
+			trace("[KinectView] device stopped");
+		}
+		
 		private function onDebugTouch(e:TouchEvent):void
 		{
 			var touch:Touch = e.getTouch(stage);
@@ -140,28 +162,6 @@ package com.razorfish.virtualwindow.view.kinect
 				
 				handleSceneMotion(_outNumX, _outNumY);
 			}
-		}
-		
-		private function onDeviceInfo(event:DeviceInfoEvent):void 
-		{
-			trace("INFO: " + event.message + "\n");
-		}
-		
-		private function onDeviceError(event:DeviceErrorEvent):void 
-		{
-			trace("ERROR: " + event.message + "\n");
-		}
-		
-		protected function kinectStartedHandler(event:DeviceEvent):void 
-		{
-			trace("[KinectView] device started");
-			if (cameraElevationStepper != null)
-				cameraElevationStepper.value = device.cameraElevationAngle;
-		}
-		
-		protected function kinectStoppedHandler(event:DeviceEvent):void 
-		{
-			trace("[KinectView] device stopped");
 		}
 		
 		protected function enterFrameHandler(event:Event):void 
