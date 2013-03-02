@@ -4,4 +4,10 @@ README.md
 
 .actionScriptProperties
 
+<<<<<<< HEAD
 .project
+=======
+.project
+
+*.swf
+>>>>>>> ignore

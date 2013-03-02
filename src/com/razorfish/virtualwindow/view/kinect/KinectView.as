@@ -119,6 +119,7 @@ package com.razorfish.virtualwindow.view.kinect
 			
 		}
 		
+<<<<<<< HEAD
 		private function onDebugTouch(e:TouchEvent):void
 		{
 			var touch:Touch = e.getTouch(stage);
@@ -142,6 +143,8 @@ package com.razorfish.virtualwindow.view.kinect
 			}
 		}
 		
+=======
+>>>>>>> ignore
 		private function onDeviceInfo(event:DeviceInfoEvent):void 
 		{
 			trace("INFO: " + event.message + "\n");
@@ -162,6 +165,29 @@ package com.razorfish.virtualwindow.view.kinect
 		protected function kinectStoppedHandler(event:DeviceEvent):void 
 		{
 			trace("[KinectView] device stopped");
+		}
+		
+		private function onDebugTouch(e:TouchEvent):void
+		{
+			var touch:Touch = e.getTouch(stage);
+			var position:Point = touch.getLocation(stage);
+			
+			if(touch.phase == TouchPhase.MOVED ){
+				
+				var trackLocX:Number = position.x / Constants.EXPLICIT_WIDTH;
+				var trackLocY:Number = position.y / Constants.EXPLICIT_HEIGHT;
+				
+				var outNumX:Number = mapRange(0, 1, 0, Constants.EXPLICIT_WIDTH, trackLocX);
+				var outNumY:Number = mapRange(0, 1, 0, Constants.EXPLICIT_HEIGHT, trackLocY);
+				
+				var _outNumX:Number = mapRange(0, 1, -1, 1, trackLocX);
+				var _outNumY:Number = mapRange(0, 1, -1, 1, trackLocY);
+				
+				debugShape.x = outNumX - 15;
+				debugShape.y = outNumY - 15;
+				
+				handleSceneMotion(_outNumX, _outNumY);
+			}
 		}
 		
 		protected function enterFrameHandler(event:Event):void 
