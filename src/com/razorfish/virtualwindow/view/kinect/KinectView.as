@@ -167,26 +167,36 @@ package com.razorfish.virtualwindow.view.kinect
 			var users:int = device.users.length;
 			var userInc:int = 0;
 			
+			
+			// set closestUser to the user that is closest
 			for (userInc; userInc < users; userInc++) {
 				var user:User = device.users[userInc];
 				
+				/*
+				if(closestUser == null){
+					closestUser = user;
+				}
+				*/
 				closestUser ||= user;
-				if (user.position.world.z < closestUser.position.world.z) closestUser = user;
 				
-				var headLocationX:Number = user.head.position.worldRelative.x;
-				var headLocationY:Number = -user.head.position.worldRelative.y;
-				
-				var outNumX:Number = mapRange(-1, 1, 0, Constants.EXPLICIT_WIDTH, headLocationX);
-				var outNumY:Number = mapRange(-1, 1, 0, Constants.EXPLICIT_HEIGHT, headLocationY);
-				
-				testImage.x = outNumX - 15;
-				testImage.y = outNumY - 15;
-				
-				
-				//testImage.z = positionRelative.z * KinectMaxDepthInFlash;
-				
-				handleSceneMotion(headLocationX, headLocationY);
+				if (user.position.world.z < closestUser.position.world.z){
+					closestUser = user;
+				}
 			}
+			
+			// now with that user update some action
+			var headLocationX:Number = closestUser.head.position.worldRelative.x;
+			var headLocationY:Number = -closestUser.head.position.worldRelative.y;
+			
+			var outNumX:Number = mapRange(-1, 1, 0, Constants.EXPLICIT_WIDTH, headLocationX);
+			var outNumY:Number = mapRange(-1, 1, 0, Constants.EXPLICIT_HEIGHT, headLocationY);
+			
+			testImage.x = outNumX - 15;
+			testImage.y = outNumY - 15;
+			
+			//testImage.z = positionRelative.z * KinectMaxDepthInFlash;
+			
+			handleSceneMotion(headLocationX, headLocationY);
 			
 			if (closestUser) {
 				closestUserSkeletonId = closestUser.trackingID;

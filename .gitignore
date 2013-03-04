@@ -9,3 +9,4 @@ README.md
 *.swf
 
 /bin-debug
+/bin-release-temp
