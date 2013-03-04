@@ -11,3 +11,13 @@ README.md
 
 *.swf
 >>>>>>> ignore
+
+bin-debug/assets/textures/atlanta.png
+
+bin-debug/assets/textures/chicago.png
+
+bin-debug/assets/textures/tree.png
+
+bin-debug/VirtualWindowApp.swf
+
+*.swf
