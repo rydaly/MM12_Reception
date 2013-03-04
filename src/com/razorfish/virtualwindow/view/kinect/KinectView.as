@@ -76,7 +76,6 @@ package com.razorfish.virtualwindow.view.kinect
 			trace("Container X :: " + sceneContainer.x + " Container Y :: " + sceneContainer.y);
 			trace("MG X :: " + mgScene.x + " MG Y :: " + mgScene.y);
 			
-			
 			//trace("test X :: " + testImage.x + " test Y :: " + testImage.y);
 			
 			if (Kinect.isSupported()) {
@@ -121,7 +120,6 @@ package com.razorfish.virtualwindow.view.kinect
 			
 		}
 		
-<<<<<<< HEAD
 		private function onDebugTouch(e:TouchEvent):void
 		{
 			var touch:Touch = e.getTouch(stage);
@@ -145,8 +143,6 @@ package com.razorfish.virtualwindow.view.kinect
 			}
 		}
 		
-=======
->>>>>>> ignore
 		private function onDeviceInfo(event:DeviceInfoEvent):void 
 		{
 			trace("INFO: " + event.message + "\n");
