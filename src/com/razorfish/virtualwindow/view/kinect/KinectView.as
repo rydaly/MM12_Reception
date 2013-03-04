@@ -65,6 +65,7 @@ package com.razorfish.virtualwindow.view.kinect
 			sceneContainer.height = Constants.EXPLICIT_HEIGHT;
 			sceneContainer.x = -Constants.SCENE_OFFSET_X;
 			sceneContainer.y = -Constants.SCENE_OFFSET_Y;
+			sceneContainer.touchable = false;
 			addChild(sceneContainer);
 			
 			sceneContainer.addChild(bgScene);
