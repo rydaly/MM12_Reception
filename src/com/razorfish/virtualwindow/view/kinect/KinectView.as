@@ -76,6 +76,7 @@ package com.razorfish.virtualwindow.view.kinect
 			trace("Container X :: " + sceneContainer.x + " Container Y :: " + sceneContainer.y);
 			trace("MG X :: " + mgScene.x + " MG Y :: " + mgScene.y);
 			
+			
 			//trace("test X :: " + testImage.x + " test Y :: " + testImage.y);
 			
 			if (Kinect.isSupported()) {
