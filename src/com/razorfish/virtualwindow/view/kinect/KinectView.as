@@ -98,7 +98,6 @@ package com.razorfish.virtualwindow.view.kinect
 				settings.skeletonEnabled = true;
 				settings.handTrackingEnabled = true;
 				settings.seatedSkeletonEnabled = true;
-				//settings.userEnabled = true;
 				
 				device.start(settings);
 				
